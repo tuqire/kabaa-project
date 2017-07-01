@@ -11,8 +11,6 @@ import Particles from './objects/particles';
 import Cube from './objects/cube';
 import Light from './objects/light';
 
-import Adhaan from './io/adhaan';
-
 function getParameterByName(name, url) {
 	if (!url) {
 		url = window.location.href;
@@ -44,11 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		const stats = new Stats();
 		const cube = new Cube({ roughness: 0.7, position: { z: 5 / 2 }, bumpScale: 0.02 });
 		const light = new Light({ color: 0x555555, strength: 5, position: [150, 150, 100] });
-		const particles = new Particles({ numParticles: WIDTH > 480 ? 1000 * 800 : 500 * 600, renderer: renderer.get() });
+		const particles = new Particles({ numParticles: WIDTH > 480 ? 1000 * 500 : 500 * 400, renderer: renderer.get() });
 		const scene = new Scene();
 
 		const gui = new GUI({ particles, scene });
-	//	const adhaan = new Adhaan();
 
 		const init = () => {
 			scene.add(cube.get());

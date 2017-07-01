@@ -1,10 +1,10 @@
-import gulp from 'gulp';
+const gulp = require('gulp');
 
-import './server';
-import './build-js';
-import './build-html';
-import './watch-js';
-import './watch-html';
+require('./server');
+require('./build-js');
+require('./build-html');
+require('./watch-js');
+require('./watch-html');
 
 gulp.task('default', ['server']);
 gulp.task('watch', ['watch-js', 'watch-html']);

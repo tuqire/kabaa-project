@@ -1,7 +1,7 @@
 import DatGUI from 'dat-gui';
 
 export default class GUI {
-	constructor({ 
+	constructor({
 		particles,
 		scene
 	} = {}) {
@@ -9,6 +9,7 @@ export default class GUI {
 
 		this.addCirclesControls(particles);
 		this.addRadiusControls(particles);
+		this.addVibrationControls(particles);
 		this.addSpeedControls(particles);
 		this.addSphereControls(particles);
 	}
@@ -34,6 +35,16 @@ export default class GUI {
 			});
 	}
 
+	addVibrationControls(particles) {
+		this.gui.add(particles, 'vibration')
+			.min(0)
+			.max(10)
+			.step(0.5)
+			.onFinishChange(() => {
+				particles.FBO.simulationShader.uniforms.vibration.value = particles.vibration;
+			});
+	}
+
 	addSpeedControls(particles) {
 		this.gui.add(particles, 'speed')
 			.min(0)
@@ -46,27 +57,5 @@ export default class GUI {
 				particles.setSimType();
 				particles.setTargetPositions();
 			});
-	}
-
-
-	// not used
-
-	addBrightnessControls(particles) {
-		this.gui.add(particles, 'maxSize')
-			.min(1)
-			.max(15)
-			.step(0.5);
-	}
-
-	addVibrationControls(particles) {
-		this.gui.add(particles, 'vibration')
-			.min(0)
-			.max(0.5);
-	}
-
-	addBeatsControls(particles) {
-		this.gui.add(particles, 'beats')
-			.min(0)
-			.max(0.5);
 	}
 }

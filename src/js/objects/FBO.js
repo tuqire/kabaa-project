@@ -1,10 +1,10 @@
 export default class FBO {
-	constructor({ 
-		tWidth = 512, 
-		tHeight = 512, 
+	constructor({
+		tWidth = 512,
+		tHeight = 512,
 		numTargets = 3,
+		filterType = THREE.NearestFilter,
 		format = THREE.RGBAFormat,
-		type = THREE.FloatType,
 		renderer,
 		uniforms,
 		simulationVertexShader,
@@ -13,23 +13,19 @@ export default class FBO {
 		this.tWidth = tWidth;
 		this.tHeight = tHeight;
 		this.numTargets = numTargets;
+		this.filterType = filterType;
 		this.format = format;
-		this.type = type;
 		this.renderer = renderer;
 
 		this.simulationShader = new THREE.ShaderMaterial({
-			uniforms,
+			uniforms: Object.assign({}, uniforms, {
+				numFrames: { type: 'f', value: 60 },
+				tPrev: { type: 't', value: null },
+				tCurr: { type: 't', value: null }
+			}),
 			vertexShader: simulationVertexShader,
 			fragmentShader:  simulationFragmentShader
 		});
-
-		this.targets = [];
-		this.dataTextures = {};
-		this.dataTextureCallbacks = {};
-
-		for (let i = 0; i < this.numTargets; i++) {
-			this.targets.push(this.createTarget());
-		}
 
 		this.cameraRTT = new THREE.OrthographicCamera(-tWidth / 2, tWidth / 2, tHeight / 2, -tHeight / 2, -1000000, 1000000);
 		this.cameraRTT.position.z = 100;
@@ -37,44 +33,65 @@ export default class FBO {
 		this.sceneRTTPos = new THREE.Scene();
 		this.sceneRTTPos.add(this.cameraRTT);
 
+		this.type = this.getType();
+		this.targets = [];
+
+		for (let i = 0; i < this.numTargets; i++) {
+			this.targets.push(this.createTarget());
+		}
+
 		this.plane = new THREE.PlaneBufferGeometry(tWidth, tHeight);
 		const quad = new THREE.Mesh(this.plane, this.simulationShader);
-		quad.position.z = -5000;
+		quad.position.z = -1;
 		this.sceneRTTPos.add(quad);
-		
-		this.count = 0;
+
+		this.count = -1;
+	}
+
+	/**
+		Tests if rendering to float render targets is available
+		THREE.FloatType not available on ios
+	**/
+	getType() {
+		const renderTarget = new THREE.WebGLRenderTarget(16, 16, {
+      format: THREE.RGBAFormat,
+      type: THREE.FloatType
+		});
+		this.renderer.render(this.sceneRTTPos, this.cameraRTT, renderTarget);
+		const gl = this.renderer.context;
+		const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+		if (status !== gl.FRAMEBUFFER_COMPLETE) {
+			console.log('FloatType not supported');
+		  return THREE.HalfFloatType;
+		}
+		return THREE.FloatType;
 	}
 
 	createTarget() {
 		const target = new THREE.WebGLRenderTarget(this.tWidth, this.tHeight, {
-			minFilter: THREE.NearestFilter,
-			magFilter: THREE.NearestFilter,
+			minFilter: this.filterType,
+			magFilter: this.filterType,
 			format: this.format,
 			type: this.type,
 			depthBuffer: false,
 			stencilBuffer: false,
 			antialias: true
 		});
+		target.texture.generateMipmaps = false;
 
-		target.generateMipmaps = false;
 		return target;
-	}
-
-	setBufferAttribute(name, data, countPerVertices = 3) {
-		this.plane.addAttribute(name, new THREE.BufferAttribute(data, countPerVertices));
 	}
 
 	setTextureUniform(name, data) {
 		const dataTexture = new THREE.DataTexture(
-			data, 
-			this.tWidth, 
-			this.tHeight, 
-			this.format, 
-			this.type
+			data,
+			this.tWidth,
+			this.tHeight,
+			this.format,
+			THREE.FloatType
 		);
 
-		dataTexture.minFilter = THREE.NearestFilter;
-		dataTexture.magFilter = THREE.NearestFilter;
+		dataTexture.minFilter = dataTexture.magFilter = this.filterType;
 		dataTexture.needsUpdate = true;
 		dataTexture.flipY = false;
 
@@ -86,22 +103,26 @@ export default class FBO {
 	}
 
 	simulate() {
+		this.count++;
+
+		if (this.count === this.numTargets) {
+			this.count = 0;
+		}
+
 		const prev = (this.count === 0 ? this.numTargets : this.count) - 1;
 		const prevTarget = this.targets[prev];
 
 		this.renderer.render(
 			this.sceneRTTPos,
 			this.cameraRTT,
-			this.targets[this.count], 
-			false
+			this.getCurrentFrame()
 		);
-		this.simulationShader.uniforms.tPrevPositions.value = prevTarget;
-		this.simulationShader.uniforms.tPositions.value = this.targets[this.count];
 
-		this.count++;
+		this.simulationShader.uniforms.tPrev.value = prevTarget;
+		this.simulationShader.uniforms.tCurr.value = this.getCurrentFrame();
+	}
 
-		if (this.count === this.numTargets) {
-			this.count = 0;
-		}
+	getCurrentFrame() {
+		return this.targets[this.count];
 	}
 }

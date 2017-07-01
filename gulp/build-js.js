@@ -1,19 +1,26 @@
-import gulp from 'gulp';
-import gutil from 'gulp-util';
-import webpack from 'webpack';
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const webpack = require('webpack');
 
 const prodConfig = Object.create(require('../webpack.config.js'));
 
 gulp.task('build-js', (callback) => {
 	prodConfig.devtool = 'cheap-module-source-map';
+	prodConfig.entry.vendor = ['dat-gui', 'detector-webgl', 'stats.js', 'three', 'three-trackballcontrols'];
 
-	prodConfig.plugins.push(new webpack.DefinePlugin({
-		'process.env': {
-			'NODE_ENV': JSON.stringify('production')
-		}
-	}));
-
-	prodConfig.plugins.push(new webpack.optimize.UglifyJsPlugin());
+	prodConfig.plugins.push(
+		new webpack.DefinePlugin({
+			'process.env': {
+				'NODE_ENV': JSON.stringify('production')
+			}
+		}),
+		new webpack.optimize.UglifyJsPlugin({
+			sourceMap: true
+		}),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor'
+    })
+	);
 
 	webpack(prodConfig, function(err, stats) {
 		if(err) throw new gutil.PluginError('build-prod', err);

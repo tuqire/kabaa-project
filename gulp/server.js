@@ -1,15 +1,14 @@
-import gulp from 'gulp';
-import gutil from 'gulp-util';
-import webpack from 'webpack';
-import WebpackDevServer from 'webpack-dev-server';
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const webpack = require('webpack');
+const WebpackDevServer = require('webpack-dev-server');
 
 const devConfig = Object.create(require('../webpack.config.js'));
 const port = '8080';
 
 gulp.task('server', () => {
 	devConfig.devtool = 'eval';
-	devConfig.debug = true;
-	devConfig.entry.app.unshift('webpack-dev-server/client?http://localhost:' + port, 'webpack/hot/dev-server');
+	devConfig.entry.bundle.unshift('webpack-dev-server/client?http://localhost:' + port, 'webpack/hot/dev-server');
 	devConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 
 	new WebpackDevServer(webpack(devConfig), {

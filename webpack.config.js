@@ -1,15 +1,15 @@
-var webpack = require('webpack');
-var path = require('path');
+const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
-	devtool: process.env.NODE_ENV === 'production' ? 'cheap-module-source-map' : 'cheap-module-eval-source-map',
+	devtool: process.env.NODE_ENV === 'cheap-module-eval-source-map',
 	entry: {
-		app: ['./src/js/main.js']
+		bundle: ['./src/js/main.js']
 	},
 	output: {
 		path: path.resolve(__dirname, 'dest', 'js'),
 		publicPath: '/js/',
-		filename: 'bundle.js'
+		filename: '[name].js'
 	},
 	module: {
 		loaders: [
@@ -19,7 +19,7 @@ module.exports = {
 			},
 			{
 				test: /\.js$/,
-				exclude: /(node_modules|bower_components)/,
+				exclude: /(node_modules)/,
 				loader: 'babel-loader',
 				query: {
 					presets: ['es2015']
@@ -30,6 +30,7 @@ module.exports = {
 	plugins: [
 		new webpack.ProvidePlugin({
 			THREE: 'three'
-		})
+		}),
+		new webpack.optimize.ModuleConcatenationPlugin()
 	]
 };

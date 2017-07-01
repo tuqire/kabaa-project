@@ -1,12 +1,12 @@
-export default `
+const simulationFragmentShader = `
 	// simulation
 	varying vec2 vUv;
 
-	uniform sampler2D tPrevPositions;
-	uniform sampler2D tPositions;
-	uniform sampler2D tTargetPositions;
+	uniform sampler2D tPrev;
+	uniform sampler2D tCurr;
+	uniform sampler2D tTargetPosition;
 
-	uniform float frames;
+	uniform float numFrames;
 	uniform float clampValue;
 
 	uniform float incSize;
@@ -14,6 +14,7 @@ export default `
 	uniform float minSize;
 
 	uniform bool flatSimulation;
+	uniform float vibration;
 
 	highp float rand(vec2 co)
 	{
@@ -26,9 +27,9 @@ export default `
 	}
 
 	float getSize() {
-		float defaultSize = texture2D(tTargetPositions, vUv).w;
-		float prevSize = texture2D(tPrevPositions, vUv).w;
-		float size = texture2D(tPositions, vUv).w;
+		float defaultSize = texture2D(tTargetPosition, vUv).w;
+		float prevSize = texture2D(tPrev, vUv).w;
+		float size = texture2D(tCurr, vUv).w;
 
 		if (size == 0.0 && prevSize == 0.0) {
 			size = defaultSize;
@@ -46,8 +47,8 @@ export default `
 	}
 
 	float getZValue(vec3 pos, vec3 targetPos) {
-		float prevZ = texture2D(tPrevPositions, vUv).z;
-		float incZ = rand(vec2(pos.x, pos.y)) / 60.0;
+		float prevZ = texture2D(tPrev, vUv).z;
+		float incZ = vibration * (rand(vec2(pos.x, pos.y)) / numFrames);
 
 		if ((pos.z < targetPos.z - 1.0) || (pos.z == targetPos.z)) {
 			pos.z += incZ;
@@ -61,8 +62,8 @@ export default `
 	}
 
 	void main() {
-		vec3 pos = texture2D(tPositions, vUv).xyz;
-		vec3 targetPos = texture2D(tTargetPositions, vUv).xyz;
+		vec3 pos = texture2D(tCurr, vUv).xyz;
+		vec3 targetPos = texture2D(tTargetPosition, vUv).xyz;
 		float size = getSize();
 
 		// fancy maths goes here
@@ -70,9 +71,9 @@ export default `
 
 		if (distanceToGoal.x != 0.0 || distanceToGoal.y != 0.0) {
 			vec3 velocity = vec3(
-				distanceToGoal.x < clampValue && distanceToGoal.x > -clampValue ? distanceToGoal.x : distanceToGoal.x / frames,
-				distanceToGoal.y < clampValue && distanceToGoal.y > -clampValue ? distanceToGoal.y : distanceToGoal.y / frames,
-				distanceToGoal.z < clampValue && distanceToGoal.z > -clampValue ? distanceToGoal.z : distanceToGoal.z / frames
+				distanceToGoal.x < clampValue && distanceToGoal.x > -clampValue ? distanceToGoal.x : distanceToGoal.x / numFrames,
+				distanceToGoal.y < clampValue && distanceToGoal.y > -clampValue ? distanceToGoal.y : distanceToGoal.y / numFrames,
+				distanceToGoal.z < clampValue && distanceToGoal.z > -clampValue ? distanceToGoal.z : distanceToGoal.z / numFrames
 			);
 
 			pos += velocity;
@@ -93,3 +94,17 @@ export default `
 		gl_FragColor = vec4(pos, size);
 	}
 `;
+
+const simulationVertexShader = `
+	varying vec2 vUv;
+
+	void main() {
+	    	vUv = vec2(uv);
+		gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+	}
+`;
+
+export {
+	simulationFragmentShader,
+	simulationVertexShader
+};

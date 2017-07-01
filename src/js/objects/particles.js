@@ -1,13 +1,14 @@
 import FBO from  './FBO';
 
-import vertexShader from '../shaders/vertexShader';
-import fragmentShader from '../shaders/fragmentShader';
-import simulationVertexShader from '../shaders/simulationVertexShader';
-import simulationFragmentShader from '../shaders/simulationFragmentShader';
+import { fragmentShader, vertexShader } from '../shaders/shaders';
+import { simulationFragmentShader, simulationVertexShader } from '../shaders/simulationShaders';
 
 export default class Particles {
 	constructor({
+		renderer,
+
 		numParticles = 1000 * 1200,
+
 		configUniforms = {
 			color: { value: new THREE.Color( 0xffffff ) },
 			sizeMultipler: { value: (window.innerHeight * window.devicePixelRatio) / 2 },
@@ -17,32 +18,34 @@ export default class Particles {
 		transparent = true,
 		depthTest = true,
 		depthWrite = false,
-		
-		circles = 7,
-		speed = 0.0005,
-		depth = 0,
-		vibration = 0.01,
-		beats = 0.075,
-		radius = 100,
-		colour = 0.8,
-		sphere = false,
 
-		renderer,
+		circles = 7,
+		radius = 100,
+		depth = 0,
+		colour = 0.8,
+
+		sphere = false,
+		speed = 0.0005,
+		vibration = 1,
+		beats = 0.075,
 
 		// particle sizes
 		minSize = 1,
 		maxSize = 5,
 		incSize = 0.05
 	}) {
-		this.numParticles = numParticles;
-		this.circles = circles;
-		this.speed = speed;
-		this.depth = depth;
-		this.beats = beats;
-		this.radius = radius;
-		this.colour = colour;
-		this.sphere = sphere;
 		this.renderer = renderer;
+		this.numParticles = numParticles;
+
+		this.circles = circles;
+		this.radius = radius;
+		this.depth = depth;
+		this.colour = colour;
+
+		this.sphere = sphere;
+		this.speed = speed;
+		this.vibration = vibration;
+		this.beats = beats;
 
 		this.minSize = minSize;
 		this.maxSize = maxSize;
@@ -60,12 +63,12 @@ export default class Particles {
 			tHeight,
 			renderer,
 			uniforms: {
-				tPrevPositions: { type: 't', value: null },
-				tPositions: { type: 't', value: null },
-				tTargetPositions: { type: 't', value: null },
-				frames: { type: 'f', value: 60 },
+				tTargetPosition: { type: 't', value: null },
 				clampValue: { type: 'f', value: 0.1 },
-				flatSimulation: {type: 'bool', value: true },
+				flatSimulation: { type: 'bool', value: true },
+
+				vibration: { type: 'f', value: this.vibration },
+
 				minSize: { type: 'f', value: this.minSize },
 				maxSize: { type: 'f', value: this.maxSize },
 				incSize: { type: 'f', value: this.incSize }
@@ -78,7 +81,7 @@ export default class Particles {
 		this.setTargetPositions();
 
 		const uniforms = Object.assign({}, configUniforms, {
-			map: { type: 't', value: this.FBO.targets[0] }
+			tPosition: { type: 't', value: this.FBO.targets[0] }
 		});
 
 		this.material = new THREE.ShaderMaterial({
@@ -101,11 +104,11 @@ export default class Particles {
 		}
 
 		this.particles = new THREE.Points(geometry, this.material);
-		this.particles.sortParticles = true;
+		this.particles.frustumCulled = false;
 	}
 
 	setDefaultPositions() {
-		this.FBO.setTextureUniform(['tPrevPositions', 'tPositions'], this.getDefaultPositions());
+		this.FBO.setTextureUniform(['tPrev', 'tCurr'], this.getDefaultPositions());
 	}
 
 	getDefaultPositions() {
@@ -117,7 +120,7 @@ export default class Particles {
 	}
 
 	setTargetPositions() {
-		this.FBO.setTextureUniform('tTargetPositions', this.getTargetPositions());
+		this.FBO.setTextureUniform('tTargetPosition', this.getTargetPositions());
 	}
 
 	getTargetPositions() {
@@ -200,7 +203,7 @@ export default class Particles {
 
 	update() {
 		this.FBO.simulate();
-		this.material.uniforms.map.value = this.FBO.simulationShader.uniforms.tPositions.value;
+		this.material.uniforms.tPosition.value = this.FBO.getCurrentFrame();
 
 		this.rotateZ(this.speed);
 	}

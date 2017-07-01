@@ -1,14 +1,10 @@
-import gulp from 'gulp';
-import gutil from 'gulp-util';
-import webpack from 'webpack';
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const webpack = require('webpack');
 
 const devConfig = Object.create(require('../webpack.config.js'));
 
 gulp.task('watch-js', () => {
-	devConfig.devtool = 'eval';
-	devConfig.debug = true;
-	devConfig.progress = true;
-	devConfig.colors = true;
 	devConfig.watch = true;
 
 	webpack(devConfig, (err, stats) => {

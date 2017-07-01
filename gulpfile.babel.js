@@ -1,1 +1,1 @@
-import tasks from './gulp/';
+var tasks = require('./gulp/');

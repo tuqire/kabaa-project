@@ -1,6 +1,6 @@
-import gulp from 'gulp';
+const gulp = require('gulp');
 
-import './build-html';
+require('./build-html');
 
 gulp.task('watch-html', () => {
 	gulp.watch('src/html/*.html', ['build-html']);
