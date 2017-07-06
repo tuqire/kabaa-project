@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const prodConfig = Object.create(require('../webpack.config.js'));
 
 gulp.task('build-js', (callback) => {
-	prodConfig.devtool = 'cheap-module-source-map';
+	prodConfig.devtool = 'source-map';
 	prodConfig.entry.vendor = ['dat-gui', 'detector-webgl', 'stats.js', 'three', 'three-trackballcontrols'];
 
 	prodConfig.plugins.push(
