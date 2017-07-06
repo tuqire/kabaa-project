@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
-	devtool: process.env.NODE_ENV === 'cheap-module-eval-source-map',
+	devtool: 'cheap-module-eval-source-map',
 	entry: {
 		bundle: ['./src/js/main.js']
 	},
