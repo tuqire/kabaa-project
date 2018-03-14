@@ -1,8 +1,11 @@
 const gulp = require('gulp');
+const path = require('path');
 const gutil = require('gulp-util');
 const webpack = require('webpack');
 
 const prodConfig = Object.create(require('../webpack.config.js'));
+
+const gitPortfolioOutput = 'tuqire.github/kabaa-project';
 
 gulp.task('build-js', (callback) => {
 	prodConfig.devtool = 'source-map';
@@ -22,12 +25,21 @@ gulp.task('build-js', (callback) => {
     })
 	);
 
-	webpack(prodConfig, function(err, stats) {
+	webpack(prodConfig, (err, stats) => {
 		if(err) throw new gutil.PluginError('build-prod', err);
 		gutil.log('[build-prod]', stats.toString({
 			colors: true
 		}));
 
-		callback();
+		prodConfig.output.path = path.resolve(__dirname, '../../', gitPortfolioOutput, 'js');
+
+		webpack(prodConfig, (err, stats) => {
+			if(err) throw new gutil.PluginError('build-prod-git', err);
+			gutil.log('[build-prod]', stats.toString({
+				colors: true
+			}));
+
+			callback();
+		});
 	});
 });
