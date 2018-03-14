@@ -12,7 +12,7 @@ Then visit http://localhost:8080
 
 ## Working Demo
 
-[tuqire.github.io/kabaa-project/](tuqire.github.io/kabaa-project/)
+[tuqire.github.io/kabaa-project/](https://tuqire.github.io/kabaa-project/)
 
 ## Contributers
 
