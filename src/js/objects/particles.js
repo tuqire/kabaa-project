@@ -1,5 +1,4 @@
-import FBO from './FBO'
-
+import FBO from 'three.js-fbo'
 import { fragmentShader, vertexShader } from '../shaders/shaders'
 import { simulationFragmentShader, simulationVertexShader } from '../shaders/simulationShaders'
 
