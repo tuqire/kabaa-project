@@ -3,7 +3,11 @@ const gulp = require('gulp');
 const gitPortfolioOutput = 'tuqire.github/kabaa-project';
 
 gulp.task('build-html', () => {
-	gulp.src(['src/html/*.html'])
-		.pipe(gulp.dest('dest'))
-    .pipe(gulp.dest(`../${gitPortfolioOutput}`));
+	const htmlPipe = gulp.src(['src/html/*.html'])
+		.pipe(gulp.dest('dest'));
+	
+	if (process.env.NODE_ENV === 'production') {
+		htmlPipe
+			.pipe(gulp.dest(`../${gitPortfolioOutput}`));
+	}
 });
