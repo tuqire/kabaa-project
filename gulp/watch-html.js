@@ -1,7 +1,7 @@
-const gulp = require('gulp');
+const gulp = require('gulp')
 
-require('./build-html');
+require('./build-html')
 
 gulp.task('watch-html', () => {
-	gulp.watch('src/html/*.html', ['build-html']);
-});
+  gulp.watch('src/html/*.html', ['build-html'])
+})
