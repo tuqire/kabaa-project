@@ -6,8 +6,9 @@
   "author": "Tuqire hussain <me@tuqire.com> (http://www.tuqire.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tuqire/webcam-particles/issues"
+    "url": "https://github.com/tuqire/kabaa-project/issues"
   },
+  "homepage": "https://github.com/tuqire/kabaa-project#readme",
   "scripts": {
     "lint": "eslint src && eslint webpack.config.js && eslint gulp",
     "start": "yarn build && gulp server",
