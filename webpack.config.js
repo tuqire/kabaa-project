@@ -1,36 +1,77 @@
 const webpack = require('webpack')
 const path = require('path')
+const HandlebarsPlugin = require('handlebars-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const dependencies = require('./package.json').dependencies
 
-module.exports = {
-  devtool: 'cheap-module-eval-source-map',
+const outputPath = process.env.GITHUB === 'true' ? path.resolve(__dirname, '..', 'tuqire.github', 'kabaa-project') : path.resolve(__dirname, 'dest')
+
+const plugins = [
+  new webpack.optimize.ModuleConcatenationPlugin(),
+
+  new HandlebarsPlugin({
+    entry: path.join(process.cwd(), 'src', 'hbs', 'index.hbs'),
+    output: `${outputPath}/[name].html`
+  }),
+
+  new CopyWebpackPlugin([
+    { from: 'src/images', to: 'images' }
+  ]),
+
+  new webpack.ProvidePlugin({
+    THREE: 'three'
+  })
+]
+
+if (process.env.NODE_ENV === 'production') {
+  plugins.push(
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true
+    }),
+
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor'
+    }),
+
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    })
+  )
+}
+
+module.exports = env => ({
+  devtool: 'source-map',
   entry: {
-    bundle: ['./src/js/main.js']
+    bundle: path.resolve(__dirname, 'src', 'js', 'main.js'),
+    vendor: Object.keys(dependencies)
   },
   output: {
-    path: path.resolve(__dirname, 'dest', 'js'),
-    publicPath: '/js/',
-    filename: '[name].js'
+    filename: 'js/[name].js',
+    path: outputPath
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.json$/,
         loader: 'json-loader'
       },
       {
-        test: /\.js$/,
-        exclude: /(node_modules)/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['es2015']
+        test: /\.(js)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader'
         }
       }
     ]
   },
-  plugins: [
-    new webpack.ProvidePlugin({
-      THREE: 'three'
-    }),
-    new webpack.optimize.ModuleConcatenationPlugin()
-  ]
-}
+  resolve: {
+    extensions: ['.js', '.json']
+  },
+  plugins,
+  devServer: {
+    contentBase: path.join(__dirname, 'dest'),
+    port: 8080
+  }
+})
