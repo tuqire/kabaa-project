@@ -26,8 +26,11 @@ function getParameterByName (name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '))
 }
 
+const isNotMobileScreen = () => window.matchMedia('(min-width: 480px)').matches
+const isTabletScreen = () => window.matchMedia('(max-width: 1000px)').matches
+
 document.addEventListener('DOMContentLoaded', () => {
-  if (isWebglEnabled) {
+  if (isWebglEnabled && isNotMobileScreen()) {
     const WIDTH = window.innerWidth
     const HEIGHT = window.innerHeight
     const aspectRatio = WIDTH / HEIGHT
@@ -42,7 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const stats = new Stats()
     const cube = new Cube({ roughness: 0.7, position: { z: 5 / 2 }, bumpScale: 0.02 })
     const light = new Light({ color: 0x555555, strength: 5, position: [150, 150, 100] })
-    const particles = new Particles({ numParticles: WIDTH > 480 ? 1000 * 500 : 500 * 400, renderer: renderer.get() })
+    const particles = new Particles({
+      numParticles: isTabletScreen() ? 400 * 500 : 1000 * 500,
+      renderer: renderer.get()
+    })
     const scene = new Scene()
 
     const gui = new GUI({ particles, scene }) // eslint-disable-line
@@ -76,6 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     animate()
   } else {
     const info = document.getElementById('info')
-    info.innerHTML = 'Your browser is not supported. Please use the latest version of Firefox or Chrome.'
+    info.innerHTML = 'This browser is not supported. Please use the latest version of Chrome on desktop.'
   }
 })
