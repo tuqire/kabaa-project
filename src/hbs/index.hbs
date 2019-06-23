@@ -15,12 +15,20 @@
 			overflow: hidden;
 			font-family: Arial, sans-serif;
 			font-size: 12px;
-			font-weight: bold;
 			line-height: 1.7;
 		}
 
 		* {
 			box-sizing: border-box;
+		}
+
+		a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
 		}
 
 		#container {
@@ -70,8 +78,8 @@
 
 		#info {
 			display: none;
+			line-height: 2;
 			background-color: rgb(26, 26, 26);
-			background-color: #111111;
 			position: absolute;
 			bottom: 0px;
 			box-sizing: border-box;
@@ -84,21 +92,13 @@
 		.hide-info-button {
 			display: block;
 			cursor: pointer;
+			background-color: rgb(20, 20, 20);
 			padding: 5px 10px;
-			background: #000000;
 			position: absolute;
 			width: 100%;
+			min-width: 80px;
 			left: 0;
 			top: -30px;
-		}
-
-		a {
-			color: inherit;
-			text-decoration: underline;
-		}
-
-		a:hover {
-			text-decoration: none;
 		}
 	</style>
 	<meta property="og:url" content="https://tuqire.github.com/kabaa-project/" />
@@ -113,7 +113,7 @@
 		<div id="select-quality">
 			<h4>Select Quality</h4>
 			<a class="quality-selector" href="?quality=25000">Very Low</a>
-			<a class="quality-selector" href="?quality=50000">Low</a>
+			<a class="quality-selector" href="?quality=60000">Low</a>
 			<a class="quality-selector" href="?quality=120000">Medium</a>
 			<a class="quality-selector" href="?quality=250000">High</a>
 			<a class="quality-selector" href="?quality=500000">Very High</a>
@@ -122,16 +122,16 @@
 			<h4>Your device or browser is not supported. Please use the latest version of Chrome on desktop.</h4>
 		</div>
 		<div id="info">
-			<a class="hide-info-button">Hide</a>
+			<a class="hide-info-button">Close</a>
 			<div class="info-content">
 				Number of particles: <span class="num-particles">0</span><br>
 				By <a target="_blank" href="http://www.tuqire.com">Tuqire Hussain</a>
 				[<a target="_blank" href="https://github.com/tuqire/kabaa-project">View Code</a>]<br>
-				Quality:
+				Select Quality:
 				<a href="?quality=25000">V Low</a> |
-				<a href="?quality=50000">Low</a> |
-				<a href="?quality=100000">Medium</a> |
-				<a href="?quality=200000">High</a> |
+				<a href="?quality=60000">Low</a> |
+				<a href="?quality=120000">Medium</a> |
+				<a href="?quality=250000">High</a> |
 				<a href="?quality=500000">V High</a>
 			</div>
 		</div>

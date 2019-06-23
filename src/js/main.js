@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderer = new Renderer({ width: WIDTH, height: HEIGHT, container })
 
     const camera = new Camera({ aspectRatio, position: { x: 310, y: -220, z: 240 } })
-    const controls = new Controls({ dynamicDampingFactor: 0.3, minDistance: 40, maxDistance: 1000, camera: camera.get(), rendererDomElement: renderer.getDomElement() })
+    const controls = new Controls({ dynamicDampingFactor: 0.3, minDistance: 40, maxDistance: 2000, camera: camera.get(), rendererDomElement: renderer.getDomElement() })
 
     const stats = new Stats()
     const cube = new Cube({ roughness: 0.7, position: { z: 5 / 2 }, bumpScale: 0.02 })

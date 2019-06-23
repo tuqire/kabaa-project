@@ -3,7 +3,7 @@ export default class Camera {
     fov = 400,
     aspectRatio = 1,
     near = 0.1,
-    far = 2000,
+    far = 5000,
     position = {
       x: 0, y: 0, z: 0
     },

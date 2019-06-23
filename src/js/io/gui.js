@@ -27,8 +27,9 @@ export default class GUI {
 
   addRadiusControls (particles) {
     this.gui.add(particles, 'radius')
-      .min(50)
-      .max(150)
+      .min(10)
+      .max(500)
+      .step(1)
       .onFinishChange(() => {
         particles.initParticleVars()
         particles.setTargetPositions()
@@ -38,8 +39,8 @@ export default class GUI {
   addVibrationControls (particles) {
     this.gui.add(particles, 'vibration')
       .min(0)
-      .max(10)
-      .step(0.5)
+      .max(50)
+      .step(0.25)
       .onFinishChange(() => {
         particles.FBO.simulationShader.uniforms.vibration.value = particles.vibration
       })
@@ -48,7 +49,8 @@ export default class GUI {
   addSpeedControls (particles) {
     this.gui.add(particles, 'speed')
       .min(0)
-      .max(0.01)
+      .max(0.05)
+      .step(0.001)
   }
 
   addSphereControls (particles) {
