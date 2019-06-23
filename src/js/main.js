@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (isWebglEnabled && isNotMobileScreen()) {
-    document.querySelector('.num-particles').innerHTML = quality.toLocaleString()
-
     showInfoBox()
 
     const WIDTH = window.innerWidth
