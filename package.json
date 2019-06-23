@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "description": "The Kabaa Project",
   "main": "src/js/index.js",
-  "author": "Tuqire hussain <me@tuqire.com> (http://www.tuqire.com)",
+  "author": "Tuqire Hussain <me@tuqire.com> (http://www.tuqire.com)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/tuqire/kabaa-project/issues"
