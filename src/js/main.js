@@ -11,31 +11,28 @@ import Particles from './objects/particles'
 import Cube from './objects/cube'
 import Light from './objects/light'
 
-function getParameterByName (name, url) {
-  if (!url) {
-    url = window.location.href
-  }
-
-  name = name.replace(/[[\]]/g, '\\$&')
-  const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`)
-  const results = regex.exec(url)
-
-  if (!results) return null
-  if (!results[2]) return ''
-
-  return decodeURIComponent(results[2].replace(/\+/g, ' '))
-}
-
-const isNotMobileScreen = () => window.matchMedia('(min-width: 480px)').matches
-const isTabletScreen = () => window.matchMedia('(max-width: 1000px)').matches
+import getParameterByName from './helpers/getParameterByName'
+import showInfoBox from './helpers/showInfoBox'
+import isNotMobileScreen from './helpers/isNotMobileScreen'
 
 document.addEventListener('DOMContentLoaded', () => {
+  const quality = Number(getParameterByName('quality'))
+
+  if (!quality || isNaN(quality)) {
+    document.getElementById('select-quality').style.display = 'block'
+    return
+  }
+
   if (isWebglEnabled && isNotMobileScreen()) {
+    document.querySelector('.num-particles').innerHTML = quality.toLocaleString()
+
+    showInfoBox()
+
     const WIDTH = window.innerWidth
     const HEIGHT = window.innerHeight
     const aspectRatio = WIDTH / HEIGHT
 
-    const container = document.getElementById('container')
+    const container = document.getElementById('simulation')
 
     const renderer = new Renderer({ width: WIDTH, height: HEIGHT, container })
 
@@ -46,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cube = new Cube({ roughness: 0.7, position: { z: 5 / 2 }, bumpScale: 0.02 })
     const light = new Light({ color: 0x555555, strength: 5, position: [150, 150, 100] })
     const particles = new Particles({
-      numParticles: isTabletScreen() ? 400 * 500 : 1000 * 500,
+      numParticles: quality,
       renderer: renderer.get()
     })
     const scene = new Scene()
@@ -60,9 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       controls.onChange(render)
 
-      if (getParameterByName('stats') === 'true') {
-        container.appendChild(stats.getDomElement())
-      }
+      container.appendChild(stats.getDomElement())
     }
 
     const animate = () => {
@@ -81,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     init()
     animate()
   } else {
-    const info = document.getElementById('info')
-    info.innerHTML = 'This browser is not supported. Please use the latest version of Chrome on desktop.'
+    document.getElementById('no-support').style.display = 'block'
   }
 })

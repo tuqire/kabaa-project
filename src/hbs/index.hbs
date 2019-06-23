@@ -8,28 +8,97 @@
 	<script type="text/javascript" src='js/bundle.js?v=2.2.0' defer="defer"></script>
 	<style>
 		body {
-			color: #ffffff;
+			color: rgb(238, 238, 238);
 			background-color: #000000;
+			height: 100vh;
 			margin: 0px;
 			overflow: hidden;
-		}
-		#info {
 			font-family: Arial, sans-serif;
 			font-size: 12px;
-			text-align: center;
 			font-weight: bold;
-			color: #ccc;
+			line-height: 1.7;
+		}
 
+		* {
+			box-sizing: border-box;
+		}
+
+		#container {
+			width: 100%;
+			height: 100%;
+			position: relative;
+		}
+
+		#select-quality {
+			display: none;
+			font-size: 15px;
+			position: relative;
+			top: 50%;
+			-ms-transform: translateY(-50%);
+			transform: translateY(-50%);
+			text-align: center;
+		}
+
+		.quality-selector {
+			cursor: pointer;
+			background: none;
+			color: inherit;
+			text-decoration: none;
+			font-size: 15px;
+			padding: 10px;
+			margin: 0 10px;
+			border: 1px solid white;
+		}
+
+		.quality-selector:hover {
+			background: #333;
+		}
+
+		h4 {
+			font-size: 25px;
+			margin: 0 20px 30px;
+		}
+
+		#no-support {
+			display: none;
+			position: relative;
+			top: 50%;
+			-ms-transform: translateY(-50%);
+			transform: translateY(-50%);
+			text-align: center;
+		}
+
+		#info {
+			display: none;
+			background-color: rgb(26, 26, 26);
+			background-color: #111111;
 			position: absolute;
 			bottom: 0px;
-			width: 100%;
-			padding: 15px;
+			box-sizing: border-box;
+		}
 
-			box-sizing: border-box;;
+		.info-content {
+			padding: 15px;
+		}
+
+		.hide-info-button {
+			display: block;
+			cursor: pointer;
+			padding: 5px 10px;
+			background: #000000;
+			position: absolute;
+			width: 100%;
+			left: 0;
+			top: -30px;
 		}
 
 		a {
-			color: #fff;
+			color: inherit;
+			text-decoration: underline;
+		}
+
+		a:hover {
+			text-decoration: none;
 		}
 	</style>
 	<meta property="og:url" content="https://tuqire.github.com/kabaa-project/" />
@@ -39,9 +108,32 @@
 	<meta property="og:image"  content="https://tuqire.github.com/kabaa-project/images/fb-share.jpg" />
 </head>
 <body>
-	<div id="container"></div>
-	<div id="info">Drag the screen to rotate the simulation. Use the controls to morph variables.<br>
-		Like on <a href="https://www.facebook.com/The-Kabaa-Project-1747916762186202/">Facebook</a> to keep upto date with version releases.<br>
-		V 2.0.1<br><br>
-		By <a href="http://www.tuqire.com/">Tuqire Hussain</a></div>
+	<div id="container">
+		<div id="simulation"></div>
+		<div id="select-quality">
+			<h4>Select Quality</h4>
+			<a class="quality-selector" href="?quality=25000">Very Low</a>
+			<a class="quality-selector" href="?quality=50000">Low</a>
+			<a class="quality-selector" href="?quality=120000">Medium</a>
+			<a class="quality-selector" href="?quality=250000">High</a>
+			<a class="quality-selector" href="?quality=500000">Very High</a>
+		</div>
+		<div id="no-support">
+			<h4>Your device or browser is not supported. Please use the latest version of Chrome on desktop.</h4>
+		</div>
+		<div id="info">
+			<a class="hide-info-button">Hide</a>
+			<div class="info-content">
+				Number of particles: <span class="num-particles">0</span><br>
+				By <a target="_blank" href="http://www.tuqire.com">Tuqire Hussain</a>
+				[<a target="_blank" href="https://github.com/tuqire/kabaa-project">View Code</a>]<br>
+				Quality:
+				<a href="?quality=25000">V Low</a> |
+				<a href="?quality=50000">Low</a> |
+				<a href="?quality=100000">Medium</a> |
+				<a href="?quality=200000">High</a> |
+				<a href="?quality=500000">V High</a>
+			</div>
+		</div>
+	</div>
 </body>
