@@ -29,7 +29,7 @@ const plugins = [
     THREE: 'three'
   }),
 
-  new CleanWebpackPlugin(),
+  new CleanWebpackPlugin()
 ]
 
 if (process.env.NODE_ENV === 'production') {
@@ -77,18 +77,18 @@ module.exports = env => ({
       new UglifyJsPlugin({
         cache: true,
         parallel: true,
-        sourceMap: !isProduction,
-      }),
+        sourceMap: !isProduction
+      })
     ],
     splitChunks: {
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
-          chunks: 'all',
-        },
-      },
-    },
+          chunks: 'all'
+        }
+      }
+    }
   },
   resolve: {
     extensions: ['.js', '.json']
